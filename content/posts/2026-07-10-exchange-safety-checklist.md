@@ -1,4 +1,5 @@
 ---
+image: "https://raw.githubusercontent.com/chaehun98123-alt/crypto-insight-lab/main/content/uploads/exchange-safety-checklist.png"
 author: "TRS"
 category: "거래소 소식"
 date: 2026-07-10
