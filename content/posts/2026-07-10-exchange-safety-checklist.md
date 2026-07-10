@@ -1,7 +1,7 @@
 ---
 image: "https://raw.githubusercontent.com/chaehun98123-alt/crypto-insight-lab/main/content/uploads/exchange-safety-checklist.png"
 author: "TRS"
-category: "거래소 소식"
+category: "메이저 거래소 사용법"
 date: 2026-07-10
 title_ko: "안전한 거래소 고르는 법: 체크리스트로 위험 신호 걸러내기"
 excerpt_ko: "특정 거래소를 지목하기보다, 신고 수리 현황·준비금 증명·콜드월렛 비율 등 스스로 안전성을 판단할 수 있는 기준을 국내외 최신 규제 흐름과 함께 정리했습니다."
