@@ -1,7 +1,7 @@
 ---
 image: "https://raw.githubusercontent.com/chaehun98123-alt/crypto-insight-lab/main/content/uploads/btc-halving.png"
 author: "TRS"
-category: "비트코인"
+category: "크립토 시황·분석"
 date: 2026-07-10
 title_ko: "비트코인 반감기, 왜 4년마다 시장을 흔드는가"
 excerpt_ko: "2028년 4월 예정된 5차 반감기까지 남은 흐름과, 과거 네 차례 반감기가 남긴 데이터를 근거로 공급 구조 변화를 분석했습니다."
