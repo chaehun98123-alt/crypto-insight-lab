@@ -1,0 +1,22 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "content/uploads"
+public_folder: "/content/uploads"
+
+collections:
+  - name: "posts"
+    label: "블로그 글"
+    folder: "content/posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - {label: "제목", name: "title", widget: "string"}
+      - label: "카테고리"
+        name: "category"
+        widget: "select"
+        options: ["비트코인", "알트코인", "시황분석", "온체인 데이터", "거래소 소식", "공지"]
+      - {label: "날짜", name: "date", widget: "datetime", format: "YYYY.MM.DD", time_format: false}
+      - {label: "요약 (목록에 보이는 짧은 소개)", name: "excerpt", widget: "text"}
+      - {label: "본문", name: "body", widget: "markdown"}
