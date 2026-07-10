@@ -1,22 +1,21 @@
 ---
-author: "기문탁"
+author: "TRS"
 category: "알트코인"
 date: 2026-07-09
 title_ko: "솔라나 생태계, 다시 주목받는 이유"
-title_en: "Why Solana's Ecosystem Is Back in the Spotlight"
-title_zh: "为什么Solana生态系统再次受到关注"
-excerpt_ko: "최근 한 달간 솔라나 관련 프로젝트들의 자금 유입이 눈에 띄게 늘었습니다."
-excerpt_en: "Capital inflows into Solana-based projects have risen noticeably over the past month."
-excerpt_zh: "过去一个月，流入Solana相关项目的资金明显增加。"
+excerpt_ko: "2026년 7월 기준 솔라나 DeFi TVL이 5주 최고치를 경신했습니다. 자금 흐름과 스테이블코인 공급 데이터로 배경을 짚었습니다."
 body_ko: |
-  최근 한 달간 솔라나 관련 프로젝트들의 자금 유입이 눈에 띄게 늘었습니다.
-
-  원인과 함께 유의할 점을 정리했습니다. 디파이 TVL 증가, 신규 런치패드 프로젝트 확대가 주요 배경으로 꼽힙니다.
-body_en: |
-  Capital inflows into Solana-based projects have risen noticeably over the past month.
-
-  Here's a summary of the reasons and things to watch for. Rising DeFi TVL and the expansion of new launchpad projects are cited as the main drivers.
-body_zh: |
-  过去一个月，流入Solana相关项目的资金明显增加。
-
-  以下总结了主要原因及需要注意的事项。DeFi锁仓量（TVL）上升以及新launchpad项目的扩张被认为是主要推动因素。
+  솔라나 생태계의 자금 흐름이 최근 눈에 띄게 개선되고 있습니다. 6월 26일 약 46.6억 달러였던 솔라나 DeFi 총예치자산(TVL)은 7월 4일 기준 약 51.1억 달러로 약 10% 늘어나며 6월 초 이후 최고 수준을 기록했습니다.
+  
+  이 지표에서 특히 주목할 부분은 TVL이 늘어나는 동안 선물 미결제약정(open interest)은 오히려 줄었다는 점입니다. 이는 레버리지를 낀 투기적 자금보다, 실제 디파이 애플리케이션에 예치되는 자금이 늘고 있다는 의미로 해석됩니다. 단기 트레이딩 수요보다 생태계 자체에 자금이 머무르려는 성격의 유입이라는 뜻입니다.
+  
+  예치 성장세는 6월 말부터 시작됐는데, 공교롭게도 장기 보유자(LTH)들이 매집을 시작한 시점과 겹칩니다. 두 흐름이 같은 시점에 함께 나타났다는 것은, 단기 트레이드보다는 꾸준한 확신을 가진 자금이 유입되고 있다는 신호로 볼 수 있습니다.
+  
+  스테이블코인 공급량도 함께 살펴볼 지표입니다. 솔라나 위의 스테이블코인 공급은 약 156억 달러 수준으로, 7월 3일 기록한 사상 최고치(약 160억 달러)에 근접한 상태를 유지하고 있습니다. 스테이블코인은 온체인에서 즉시 투입 가능한 '대기 자금' 성격을 가지므로, 이 수치가 높게 유지된다는 것은 수요가 이어질 경우 추가 매수 여력이 충분하다는 뜻으로 해석됩니다.
+  
+  더 넓은 시각에서 보면 2026년 상반기 솔라나의 거래량, 활성 주소 수, 생태계 TVL은 모두 사상 최고 수준을 기록했습니다. 특히 리퀴드 스테이킹 부문의 TVL은 전년 대비 217% 성장했고, 2025년 2분기 대비로도 추가로 130% 늘어나는 등 특정 카테고리에서 뚜렷한 강세를 보이고 있습니다.
+  
+  물론 디파이 TVL 성장이 곧바로 토큰 가격 상승으로 직결되는 것은 아닙니다. 다만 자금 흐름의 방향성과 성격(레버리지성인지 예치성인지), 장기 보유자의 행동, 스테이블코인 대기 자금 규모를 함께 살펴보면 생태계의 건강성을 판단하는 데 도움이 됩니다.
+  
+  참고: The Defiant, DefiLlama, Yahoo Finance, ainvest의 2026년 7월 솔라나 생태계 리포트를 종합했습니다.
+---
