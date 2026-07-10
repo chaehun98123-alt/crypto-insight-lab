@@ -11,12 +11,49 @@ collections:
     folder: "content/posts"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    view_groups:
+      - label: "카테고리별로 보기"
+        field: category
     fields:
-      - {label: "제목", name: "title", widget: "string"}
+      - label: "작성자"
+        name: "author"
+        widget: "string"
+        default: "기문탁"
       - label: "카테고리"
         name: "category"
         widget: "select"
         options: ["비트코인", "알트코인", "시황분석", "온체인 데이터", "거래소 소식", "공지"]
       - {label: "날짜", name: "date", widget: "datetime", format: "YYYY.MM.DD", time_format: false}
-      - {label: "요약 (목록에 보이는 짧은 소개)", name: "excerpt", widget: "text"}
-      - {label: "본문", name: "body", widget: "markdown"}
+      - label: "제목 (한국어)"
+        name: "title_ko"
+        widget: "string"
+      - label: "제목 (English)"
+        name: "title_en"
+        widget: "string"
+        required: false
+      - label: "제목 (中文)"
+        name: "title_zh"
+        widget: "string"
+        required: false
+      - label: "요약 (한국어)"
+        name: "excerpt_ko"
+        widget: "text"
+      - label: "요약 (English)"
+        name: "excerpt_en"
+        widget: "text"
+        required: false
+      - label: "요약 (中文)"
+        name: "excerpt_zh"
+        widget: "text"
+        required: false
+      - label: "본문 (한국어)"
+        name: "body_ko"
+        widget: "markdown"
+      - label: "본문 (English)"
+        name: "body_en"
+        widget: "markdown"
+        required: false
+      - label: "본문 (中文)"
+        name: "body_zh"
+        widget: "markdown"
+        required: false
