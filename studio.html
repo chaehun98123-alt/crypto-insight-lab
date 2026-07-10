@@ -99,12 +99,10 @@ button:disabled{opacity:.5;cursor:not-allowed;}
       <div>
         <label>카테고리</label>
         <select id="postCategory">
-          <option>비트코인</option>
-          <option>알트코인</option>
-          <option>시황분석</option>
-          <option>온체인 데이터</option>
-          <option>거래소 소식</option>
-          <option>공지</option>
+          <option>크립토 시황·분석</option>
+<option>온체인 데이터</option>
+<option>메이저 거래소 사용법</option>
+<option>공지</option>
         </select>
       </div>
       <div>
@@ -484,7 +482,7 @@ function loadPostForEdit(slug, meta){
   document.getElementById('editSha').value = '';
   document.getElementById('writeHeading').textContent = '글 수정: ' + (meta.title_ko||'');
   document.getElementById('deleteBtn').style.display = 'inline-block';
-  document.getElementById('postCategory').value = meta.category || '비트코인';
+  document.getElementById('postCategory').value = meta.category || '크립토 시황·분석';
   document.getElementById('postAuthor').value = meta.author || 'TRS';
   document.getElementById('postDate').value = meta.date || new Date().toISOString().slice(0,10);
   ['title_ko','title_en','title_zh','excerpt_ko','excerpt_en','excerpt_zh','body_ko','body_en','body_zh'].forEach(id=>{
