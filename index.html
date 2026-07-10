@@ -95,7 +95,7 @@ a{color:inherit;text-decoration:none;}
   <aside class="side-col">
     <div class="widget profile-widget">
       <div class="avatar"></div>
-      <div class="name">기문탁</div>
+      <div class="name" id="profileName">기문탁</div>
       <div class="role">5년 차 코인 분석가 · 매일 시황 브리핑</div>
     </div>
     <div class="widget">
@@ -199,9 +199,32 @@ function renderLangSwitch(){
   });
 }
 
+let settings = null;
+
+async function loadSettings(){
+  try{
+    const listUrl = `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/content/settings.json?ref=${GH_BRANCH}`;
+    const res = await fetch(listUrl);
+    if(!res.ok) return null;
+    const meta = await res.json();
+    const raw = await fetch(meta.download_url).then(r=>r.text());
+    return JSON.parse(raw);
+  }catch(e){
+    console.error('settings load failed', e);
+    return null;
+  }
+}
+
 function renderHeaderTexts(){
   document.querySelector('.blog-desc').textContent = t('desc');
-  document.querySelector('.profile-widget .role').textContent = t('role');
+  const roleEl = document.querySelector('.profile-widget .role');
+  const nameEl = document.getElementById('profileName');
+  if(settings){
+    nameEl.textContent = settings.author_name || '기문탁';
+    roleEl.textContent = settings['role_' + lang] || settings.role_ko || t('role');
+  } else {
+    roleEl.textContent = t('role');
+  }
   document.querySelectorAll('.widget h3')[0].textContent = t('recent');
   document.querySelectorAll('.widget h3')[1].textContent = t('category');
   document.getElementById('loadingMsg').textContent = t('loading');
@@ -305,8 +328,12 @@ updateTicker();
 setInterval(updateTicker, 5000);
 
 renderLangSwitch();
-renderHeaderTexts();
 renderNav();
+loadSettings().then(data=>{
+  settings = data;
+  renderHeaderTexts();
+});
+renderHeaderTexts();
 loadPosts().then(data=>{
   posts = data;
   document.getElementById('loadingMsg').style.display = 'none';
