@@ -62,6 +62,16 @@ a{color:inherit;text-decoration:none;}
 .lang-switch button{background:var(--bg-panel);border:1px solid var(--line);color:var(--text-sub);font-size:12px;padding:5px 10px;border-radius:8px;cursor:pointer;font-weight:600;}
 .lang-switch button.active{color:var(--neon-green);border-color:var(--neon-green);}
 .post-author{color:var(--text-sub);}
+
+.post-thumb{width:100%;height:160px;object-fit:cover;border-radius:10px;margin-bottom:14px;display:block;background:var(--bg-main);}
+.post-detail{display:none;}
+.post-detail.active{display:block;}
+.post-detail .post-thumb{height:280px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg-panel);border:1px solid var(--line);color:var(--text-sub);font-size:13px;padding:8px 14px;border-radius:8px;cursor:pointer;margin-bottom:16px;font-weight:600;}
+.back-btn:hover{color:var(--neon-green);border-color:var(--neon-green);}
+.post-detail .post-title{font-size:24px;}
+.post-detail .post-body{display:block;white-space:pre-line;border-top:none;margin-top:16px;padding-top:0;}
+#postListView.hidden{display:none;}
 </style>
 </head>
 <body>
@@ -87,9 +97,12 @@ a{color:inherit;text-decoration:none;}
       <div class="ticker-chip" data-market="KRW-XRP"><div class="name">XRP</div><div class="price">불러오는 중</div><div class="rate">-</div></div>
     </div>
 
-    <p id="loadingMsg">글을 불러오는 중...</p>
+    <div id="postListView">
+<p id="loadingMsg">글을 불러오는 중...</p>
     <div id="postList"></div>
     <p id="emptyMsg">이 카테고리에는 아직 글이 없습니다.</p>
+</div>
+<div id="postDetail" class="post-detail"></div>
   </main>
 
   <aside class="side-col">
@@ -248,35 +261,78 @@ function renderNav(){
 }
 
 function renderPosts(){
-  const list = document.getElementById('postList');
-  const empty = document.getElementById('emptyMsg');
-  const filtered = activeCategory === "전체" ? posts : posts.filter(p=>p.category===activeCategory);
+const list = document.getElementById('postList');
+const empty = document.getElementById('emptyMsg');
+const filtered = activeCategory === "전체" ? posts : posts.filter(p=>p.category===activeCategory);
 
-  if(filtered.length===0){
-    list.innerHTML = "";
-    empty.style.display = "block";
-    return;
-  }
-  empty.style.display = "none";
-
-  list.innerHTML = filtered.map(p=>{
-    const title = field(p, 'title') || '(no title)';
-    const excerpt = field(p, 'excerpt');
-    const body = field(p, 'body');
-    return `
-    <article class="post-card">
-      <span class="post-tag">${catLabel(p.category)}</span>
-      <h2 class="post-title">${title}</h2>
-      <p class="post-excerpt">${excerpt}</p>
-      <div class="post-meta"><span>${p.date||''}</span><span class="post-author">${t('by')} ${p.author||''}</span></div>
-      <div class="post-body">${body}</div>
-    </article>
-  `;}).join('');
-
-  list.querySelectorAll('.post-card').forEach(card=>{
-    card.addEventListener('click', ()=> card.classList.toggle('open'));
-  });
+if(filtered.length===0){
+list.innerHTML = "";
+empty.style.display = "block";
+return;
 }
+empty.style.display = "none";
+
+list.innerHTML = filtered.map(p=>{
+const title = field(p, 'title') || '(no title)';
+const excerpt = field(p, 'excerpt');
+const thumb = p.image ? '<img class="post-thumb" src="' + p.image + '" alt="' + title + '" loading="lazy">' : '';
+return `
+<article class="post-card" data-slug="${p.slug}">
+${thumb}
+<span class="post-tag">${catLabel(p.category)}</span>
+<h2 class="post-title">${title}</h2>
+<p class="post-excerpt">${excerpt}</p>
+<div class="post-meta"><span>${p.date||''}</span><span class="post-author">${t('by')} ${p.author||''}</span></div>
+</article>
+`;}).join('');
+
+list.querySelectorAll('.post-card').forEach(card=>{
+card.addEventListener('click', ()=>{ location.hash = '#/post/' + card.dataset.slug; });
+});
+}
+
+function renderDetail(slug){
+const p = posts.find(x=>x.slug===slug);
+const detail = document.getElementById('postDetail');
+if(!p){
+detail.innerHTML = '<button class="back-btn" id="backBtn">← ' + t('recent') + '</button><p>' + t('empty') + '</p>';
+document.getElementById('backBtn').addEventListener('click', ()=>{ location.hash=''; });
+return;
+}
+const title = field(p, 'title') || '(no title)';
+const excerpt = field(p, 'excerpt');
+const body = field(p, 'body');
+const thumb = p.image ? '<img class="post-thumb" src="' + p.image + '" alt="' + title + '">' : '';
+detail.innerHTML = `
+<button class="back-btn" id="backBtn">← ${lang==='ko'?'목록으로':(lang==='en'?'Back to list':'返回列表')}</button>
+<article class="post-card">
+${thumb}
+<span class="post-tag">${catLabel(p.category)}</span>
+<h2 class="post-title">${title}</h2>
+<p class="post-excerpt">${excerpt}</p>
+<div class="post-meta"><span>${p.date||''}</span><span class="post-author">${t('by')} ${p.author||''}</span></div>
+<div class="post-body">${body}</div>
+</article>
+`;
+document.getElementById('backBtn').addEventListener('click', ()=>{ location.hash=''; });
+}
+
+function route(){
+const hash = location.hash;
+const m = hash.match(/^#\/post\/(.+)$/);
+const listView = document.getElementById('postListView');
+const detail = document.getElementById('postDetail');
+if(m){
+listView.classList.add('hidden');
+detail.classList.add('active');
+renderDetail(decodeURIComponent(m[1]));
+window.scrollTo(0,0);
+} else {
+listView.classList.remove('hidden');
+detail.classList.remove('active');
+}
+}
+window.addEventListener('hashchange', route);
 
 function renderSidebar(){
   const recent = document.getElementById('popularList');
@@ -294,6 +350,7 @@ function renderAll(){
   renderNav();
   renderPosts();
   renderSidebar();
+route();
 }
 
 document.querySelectorAll('#langSwitch button').forEach(btn=>{
@@ -343,6 +400,7 @@ loadPosts().then(data=>{
   document.getElementById('loadingMsg').style.display = 'none';
   renderPosts();
   renderSidebar();
+route();
 }).catch(err=>{
   console.error(err);
   document.getElementById('loadingMsg').textContent = '글을 불러오지 못했습니다. index.html의 GH_USER / GH_REPO 값을 확인해주세요.';
