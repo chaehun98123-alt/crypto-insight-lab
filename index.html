@@ -380,13 +380,16 @@ detail.classList.remove('active');
 window.addEventListener('hashchange', route);
 
 function renderSidebar(){
-  const recent = document.getElementById('popularList');
-  recent.innerHTML = posts.slice(0,5).map(p=>`<li>${field(p,'title')}</li>`).join('');
+const recent = document.getElementById('popularList');
+recent.innerHTML = posts.slice(0,5).map(p=>'<li data-slug="' + p.slug + '" style="cursor:pointer;">' + field(p,'title') + '</li>').join('');
+recent.querySelectorAll('li').forEach(li=>{
+li.addEventListener('click', ()=>{ location.hash = '#/post/' + li.dataset.slug; });
+});
 
-  const catList = document.getElementById('categoryCountList');
-  const counts = {};
-  posts.forEach(p=> counts[p.category] = (counts[p.category]||0)+1);
-  catList.innerHTML = Object.entries(counts).map(([c,n])=>`<li>${catLabel(c)} (${n})</li>`).join('');
+const catList = document.getElementById('categoryCountList');
+const counts = {};
+posts.forEach(p=> counts[p.category] = (counts[p.category]||0)+1);
+catList.innerHTML = Object.entries(counts).map(([c,n])=>'<li>' + catLabel(c) + ' (' + n + ')</li>').join('');
 }
 
 function renderAll(){
