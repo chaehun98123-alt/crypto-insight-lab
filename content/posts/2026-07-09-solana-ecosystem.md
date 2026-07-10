@@ -1,7 +1,7 @@
 ---
 image: "https://raw.githubusercontent.com/chaehun98123-alt/crypto-insight-lab/main/content/uploads/solana-ecosystem.png"
 author: "TRS"
-category: "알트코인"
+category: "크립토 시황·분석"
 date: 2026-07-09
 title_ko: "솔라나 생태계, 다시 주목받는 이유"
 excerpt_ko: "2026년 7월 기준 솔라나 DeFi TVL이 5주 최고치를 경신했습니다. 자금 흐름과 스테이블코인 공급 데이터로 배경을 짚었습니다."
