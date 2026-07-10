@@ -3,7 +3,6 @@ author: "TRS"
 category: "크립토 시황·분석"
 date: 2026-07-10
 order: 7000
-order: 7000
 title_ko: "CPI·FOMC 발표가 비트코인을 흔드는 이유, 숫자로 뜯어봤습니다"
 excerpt_ko: "CPI에서 금리 기대, 달러, 비트코인 가격까지 이어지는 연결고리와 최근 FOMC의 매파적 스탠스를 실시간 차트와 함께 정리했습니다."
 body_ko: |
