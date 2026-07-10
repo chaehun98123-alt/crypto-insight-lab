@@ -3,7 +3,6 @@ author: "TRS"
 category: "메이저 거래소 사용법"
 date: 2026-07-10
 order: 9000
-order: 9000
 title_ko: "해외 거래소 첫 가입, KYC 인증까지 이렇게 진행됩니다"
 excerpt_ko: "정부 발행 신분증부터 생체 인증까지, 해외 거래소 KYC 절차를 단계별로 정리하고 가입 시 꼭 지켜야 할 보안 수칙을 안내합니다."
 body_ko: |
