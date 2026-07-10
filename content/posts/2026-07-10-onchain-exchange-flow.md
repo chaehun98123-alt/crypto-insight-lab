@@ -1,4 +1,5 @@
 ---
+image: "https://raw.githubusercontent.com/chaehun98123-alt/crypto-insight-lab/main/content/uploads/onchain-exchange-flow.png"
 author: "TRS"
 category: "온체인 데이터"
 date: 2026-07-10
