@@ -6,54 +6,134 @@ media_folder: "content/uploads"
 public_folder: "/content/uploads"
 
 collections:
-  - name: "posts"
-    label: "블로그 글"
+  - name: "settings"
+    label: "블로그 설정"
+    files:
+      - name: "profile"
+        label: "프로필"
+        file: "content/settings.json"
+        fields:
+          - {label: "이름 (사이드바에 표시)", name: "author_name", widget: "string", default: "기문탁"}
+          - {label: "소개 문구 (한국어)", name: "role_ko", widget: "string"}
+          - {label: "소개 문구 (English)", name: "role_en", widget: "string", required: false}
+          - {label: "소개 문구 (中文)", name: "role_zh", widget: "string", required: false}
+
+  - name: "bitcoin"
+    label: "📁 비트코인"
     folder: "content/posts"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
-    view_groups:
-      - label: "카테고리별로 보기"
-        field: category
-    fields:
-      - label: "작성자"
-        name: "author"
-        widget: "string"
-        default: "기문탁"
-      - label: "카테고리"
-        name: "category"
-        widget: "select"
-        options: ["비트코인", "알트코인", "시황분석", "온체인 데이터", "거래소 소식", "공지"]
+    filter: {field: "category", value: "비트코인"}
+    fields: &postFields
+      - {label: "작성자", name: "author", widget: "string", default: "기문탁"}
+      - {label: "카테고리", name: "category", widget: "hidden", default: "비트코인"}
       - {label: "날짜", name: "date", widget: "datetime", format: "YYYY.MM.DD", time_format: false}
-      - label: "제목 (한국어)"
-        name: "title_ko"
-        widget: "string"
-      - label: "제목 (English)"
-        name: "title_en"
-        widget: "string"
-        required: false
-      - label: "제목 (中文)"
-        name: "title_zh"
-        widget: "string"
-        required: false
-      - label: "요약 (한국어)"
-        name: "excerpt_ko"
-        widget: "text"
-      - label: "요약 (English)"
-        name: "excerpt_en"
-        widget: "text"
-        required: false
-      - label: "요약 (中文)"
-        name: "excerpt_zh"
-        widget: "text"
-        required: false
-      - label: "본문 (한국어)"
-        name: "body_ko"
-        widget: "markdown"
-      - label: "본문 (English)"
-        name: "body_en"
-        widget: "markdown"
-        required: false
-      - label: "본문 (中文)"
-        name: "body_zh"
-        widget: "markdown"
-        required: false
+      - {label: "제목 (한국어)", name: "title_ko", widget: "string"}
+      - {label: "제목 (English)", name: "title_en", widget: "string", required: false}
+      - {label: "제목 (中文)", name: "title_zh", widget: "string", required: false}
+      - {label: "요약 (한국어)", name: "excerpt_ko", widget: "text"}
+      - {label: "요약 (English)", name: "excerpt_en", widget: "text", required: false}
+      - {label: "요약 (中文)", name: "excerpt_zh", widget: "text", required: false}
+      - {label: "본문 (한국어)", name: "body_ko", widget: "markdown"}
+      - {label: "본문 (English)", name: "body_en", widget: "markdown", required: false}
+      - {label: "본문 (中文)", name: "body_zh", widget: "markdown", required: false}
+
+  - name: "altcoin"
+    label: "📁 알트코인"
+    folder: "content/posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    filter: {field: "category", value: "알트코인"}
+    fields:
+      - {label: "작성자", name: "author", widget: "string", default: "기문탁"}
+      - {label: "카테고리", name: "category", widget: "hidden", default: "알트코인"}
+      - {label: "날짜", name: "date", widget: "datetime", format: "YYYY.MM.DD", time_format: false}
+      - {label: "제목 (한국어)", name: "title_ko", widget: "string"}
+      - {label: "제목 (English)", name: "title_en", widget: "string", required: false}
+      - {label: "제목 (中文)", name: "title_zh", widget: "string", required: false}
+      - {label: "요약 (한국어)", name: "excerpt_ko", widget: "text"}
+      - {label: "요약 (English)", name: "excerpt_en", widget: "text", required: false}
+      - {label: "요약 (中文)", name: "excerpt_zh", widget: "text", required: false}
+      - {label: "본문 (한국어)", name: "body_ko", widget: "markdown"}
+      - {label: "본문 (English)", name: "body_en", widget: "markdown", required: false}
+      - {label: "본문 (中文)", name: "body_zh", widget: "markdown", required: false}
+
+  - name: "market_analysis"
+    label: "📁 시황분석"
+    folder: "content/posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    filter: {field: "category", value: "시황분석"}
+    fields:
+      - {label: "작성자", name: "author", widget: "string", default: "기문탁"}
+      - {label: "카테고리", name: "category", widget: "hidden", default: "시황분석"}
+      - {label: "날짜", name: "date", widget: "datetime", format: "YYYY.MM.DD", time_format: false}
+      - {label: "제목 (한국어)", name: "title_ko", widget: "string"}
+      - {label: "제목 (English)", name: "title_en", widget: "string", required: false}
+      - {label: "제목 (中文)", name: "title_zh", widget: "string", required: false}
+      - {label: "요약 (한국어)", name: "excerpt_ko", widget: "text"}
+      - {label: "요약 (English)", name: "excerpt_en", widget: "text", required: false}
+      - {label: "요약 (中文)", name: "excerpt_zh", widget: "text", required: false}
+      - {label: "본문 (한국어)", name: "body_ko", widget: "markdown"}
+      - {label: "본문 (English)", name: "body_en", widget: "markdown", required: false}
+      - {label: "본문 (中文)", name: "body_zh", widget: "markdown", required: false}
+
+  - name: "onchain"
+    label: "📁 온체인 데이터"
+    folder: "content/posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    filter: {field: "category", value: "온체인 데이터"}
+    fields:
+      - {label: "작성자", name: "author", widget: "string", default: "기문탁"}
+      - {label: "카테고리", name: "category", widget: "hidden", default: "온체인 데이터"}
+      - {label: "날짜", name: "date", widget: "datetime", format: "YYYY.MM.DD", time_format: false}
+      - {label: "제목 (한국어)", name: "title_ko", widget: "string"}
+      - {label: "제목 (English)", name: "title_en", widget: "string", required: false}
+      - {label: "제목 (中文)", name: "title_zh", widget: "string", required: false}
+      - {label: "요약 (한국어)", name: "excerpt_ko", widget: "text"}
+      - {label: "요약 (English)", name: "excerpt_en", widget: "text", required: false}
+      - {label: "요약 (中文)", name: "excerpt_zh", widget: "text", required: false}
+      - {label: "본문 (한국어)", name: "body_ko", widget: "markdown"}
+      - {label: "본문 (English)", name: "body_en", widget: "markdown", required: false}
+      - {label: "본문 (中文)", name: "body_zh", widget: "markdown", required: false}
+
+  - name: "exchange_news"
+    label: "📁 거래소 소식"
+    folder: "content/posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    filter: {field: "category", value: "거래소 소식"}
+    fields:
+      - {label: "작성자", name: "author", widget: "string", default: "기문탁"}
+      - {label: "카테고리", name: "category", widget: "hidden", default: "거래소 소식"}
+      - {label: "날짜", name: "date", widget: "datetime", format: "YYYY.MM.DD", time_format: false}
+      - {label: "제목 (한국어)", name: "title_ko", widget: "string"}
+      - {label: "제목 (English)", name: "title_en", widget: "string", required: false}
+      - {label: "제목 (中文)", name: "title_zh", widget: "string", required: false}
+      - {label: "요약 (한국어)", name: "excerpt_ko", widget: "text"}
+      - {label: "요약 (English)", name: "excerpt_en", widget: "text", required: false}
+      - {label: "요약 (中文)", name: "excerpt_zh", widget: "text", required: false}
+      - {label: "본문 (한국어)", name: "body_ko", widget: "markdown"}
+      - {label: "본문 (English)", name: "body_en", widget: "markdown", required: false}
+      - {label: "본문 (中文)", name: "body_zh", widget: "markdown", required: false}
+
+  - name: "notice"
+    label: "📁 공지"
+    folder: "content/posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    filter: {field: "category", value: "공지"}
+    fields:
+      - {label: "작성자", name: "author", widget: "string", default: "기문탁"}
+      - {label: "카테고리", name: "category", widget: "hidden", default: "공지"}
+      - {label: "날짜", name: "date", widget: "datetime", format: "YYYY.MM.DD", time_format: false}
+      - {label: "제목 (한국어)", name: "title_ko", widget: "string"}
+      - {label: "제목 (English)", name: "title_en", widget: "string", required: false}
+      - {label: "제목 (中文)", name: "title_zh", widget: "string", required: false}
+      - {label: "요약 (한국어)", name: "excerpt_ko", widget: "text"}
+      - {label: "요약 (English)", name: "excerpt_en", widget: "text", required: false}
+      - {label: "요약 (中文)", name: "excerpt_zh", widget: "text", required: false}
+      - {label: "본문 (한국어)", name: "body_ko", widget: "markdown"}
+      - {label: "본문 (English)", name: "body_en", widget: "markdown", required: false}
+      - {label: "본문 (中文)", name: "body_zh", widget: "markdown", required: false}
