@@ -3,6 +3,7 @@ image: "https://raw.githubusercontent.com/chaehun98123-alt/crypto-insight-lab/ma
 author: "TRS"
 category: "메이저 거래소 사용법"
 date: 2026-07-08
+order: 3000
 title_ko: "국내 거래소 수수료 완전 비교: 업비트 vs 빗썸 vs 코인원"
 excerpt_ko: "2026년 기준 원화 마켓 수수료 구조와 할인 정책, 거래소별 강점을 실제 수치로 비교했습니다."
 body_ko: |
