@@ -1,4 +1,5 @@
 ---
+image: "https://raw.githubusercontent.com/chaehun98123-alt/crypto-insight-lab/main/content/uploads/solana-ecosystem.png"
 author: "TRS"
 category: "알트코인"
 date: 2026-07-09
