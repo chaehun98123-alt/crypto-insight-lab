@@ -1,4 +1,5 @@
 ---
+image: "https://raw.githubusercontent.com/chaehun98123-alt/crypto-insight-lab/main/content/uploads/bitcoin-sideways.png"
 author: "TRS"
 category: "시황분석"
 date: 2026-07-10
