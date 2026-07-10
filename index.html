@@ -161,7 +161,50 @@ let posts = [];
 
 function t(key){ return UI[lang][key]; }
 function catLabel(cat){ return (CAT_LABELS[cat] && CAT_LABELS[cat][lang]) || cat; }
-function field(p, base){ return p[base + '_' + lang] || p[base + '_ko'] || ''; }
+const translationCache = JSON.parse(localStorage.getItem('translationCache') || '{}');
+function saveTransCache(){ try{ localStorage.setItem('translationCache', JSON.stringify(translationCache)); }catch(e){} }
+async function translateText(text, targetLang){
+if(!text) return text;
+const tgt = targetLang === 'zh' ? 'zh-CN' : targetLang;
+try{
+const res = await fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) + '&langpair=ko|' + tgt + '&de=trsblog@example.com');
+const data = await res.json();
+return (data.responseData && data.responseData.translatedText) ? data.responseData.translatedText : text;
+}catch(e){ console.error('translate error', e); return text; }
+}
+async function translateHTML(html, targetLang){
+const temp = document.createElement('div');
+temp.innerHTML = html;
+const walker = document.createTreeWalker(temp, NodeFilter.SHOW_TEXT, null);
+const nodes = [];
+let n;
+while(n = walker.nextNode()){ if(n.textContent.trim()) nodes.push(n); }
+for(const node of nodes){ node.textContent = await translateText(node.textContent, targetLang); }
+return temp.innerHTML;
+}
+const pendingTranslations = new Set();
+function field(p, base){
+const direct = p[base + '_' + lang];
+if(direct) return direct;
+const ko = p[base + '_ko'] || '';
+if(lang === 'ko' || !ko) return ko;
+const cacheKey = p.slug + '|' + lang + '|' + base;
+if(translationCache[cacheKey]) return translationCache[cacheKey];
+if(!pendingTranslations.has(cacheKey)){
+pendingTranslations.add(cacheKey);
+const job = (base === 'body') ? translateHTML(ko, lang) : translateText(ko, lang);
+job.then(result=>{
+translationCache[cacheKey] = result;
+saveTransCache();
+pendingTranslations.delete(cacheKey);
+const hashMatch = location.hash.match(/^#\/post\/(.+)$/);
+if(hashMatch) renderDetail(decodeURIComponent(hashMatch[1]));
+else renderPosts();
+if(document.getElementById('popularList')) renderSidebar();
+});
+}
+return ko;
+}
 
 function parseFrontmatter(raw, filename){
   let meta = { slug: filename.replace(/\.md$/,'') };
@@ -200,7 +243,7 @@ async function loadPosts(){
     const raw = await fetch(f.download_url).then(r=>r.text());
     return parseFrontmatter(raw, f.name);
   }));
-  loaded.sort((a,b)=> new Date(b.date) - new Date(a.date));
+  loaded.sort((a,b)=> (Number(b.order)||0) - (Number(a.order)||0) || (new Date(b.date) - new Date(a.date)));
   return loaded;
 }
 
@@ -249,13 +292,17 @@ function renderNav(){
     `<a href="#" data-cat="${c}" class="${c===activeCategory ? 'active':''}">${catLabel(c)}</a>`
   ).join('');
   nav.querySelectorAll('a').forEach(a=>{
-    a.addEventListener('click', e=>{
-      e.preventDefault();
-      activeCategory = a.dataset.cat;
-      renderNav();
-      renderPosts();
-    });
-  });
+a.addEventListener('click', e=>{
+e.preventDefault();
+activeCategory = a.dataset.cat;
+if(location.hash){ location.hash = ''; }
+renderNav();
+renderPosts();
+document.getElementById('postListView').classList.remove('hidden');
+document.getElementById('postDetail').classList.remove('active');
+window.scrollTo(0,0);
+});
+});
 }
 
 function renderPosts(){
