@@ -1,7 +1,7 @@
 ---
 image: "https://raw.githubusercontent.com/chaehun98123-alt/crypto-insight-lab/main/content/uploads/bitcoin-sideways.png"
 author: "TRS"
-category: "시황분석"
+category: "크립토 시황·분석"
 date: 2026-07-10
 title_ko: "비트코인 옆으로 기는 이유는? 7월 시장의 구조적 신호 읽기"
 excerpt_ko: "거래량 감소, 좁아진 변동성, 공포·탐욕 지수까지 최근 시황을 만드는 구조적 요인들을 짚어봤습니다. (실시간 가격은 상단 시세판을 참고하세요)"
