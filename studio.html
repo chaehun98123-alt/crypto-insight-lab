@@ -467,12 +467,20 @@ async function loadPostList(){
     }));
     items.sort((a,b)=> (b.meta.date||'').localeCompare(a.meta.date||''));
     if(items.length === 0){ el.innerHTML = '<p class="hint">아직 작성된 글이 없습니다.</p>'; return; }
-    el.innerHTML = items.map(it => `
+    window.__postListItems = items;
+    function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    el.innerHTML = items.map((it, idx) => `
       <div class="post-item">
-        <div><span class="tag">${it.meta.category||''}</span>${it.meta.title_ko||'(제목 없음)'} <span class="hint">${it.meta.date||''}</span></div>
-        <button class="secondary" onclick='loadPostForEdit(${JSON.stringify(it.slug)}, ${JSON.stringify(it.meta)})'>수정</button>
+        <div><span class="tag">${escHtml(it.meta.category)}</span>${escHtml(it.meta.title_ko||'(제목 없음)')} <span class="hint">${escHtml(it.meta.date)}</span></div>
+        <button class="secondary" data-idx="${idx}">수정</button>
       </div>
     `).join('');
+    el.querySelectorAll('button[data-idx]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const item = window.__postListItems[Number(btn.dataset.idx)];
+        if(item) loadPostForEdit(item.slug, item.meta);
+      });
+    });
   }catch(e){
     el.textContent = '목록을 불러오지 못했습니다: ' + e.message;
   }
