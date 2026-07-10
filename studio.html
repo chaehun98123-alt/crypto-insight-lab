@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>CRYPTO INSIGHT LAB · 관리 도구</title>
+<style>
+:root{
+  --bg-main:#0b0e14; --bg-panel:#12161f; --bg-panel2:#161b26; --line:#232a38;
+  --text-main:#e8ecf1; --text-sub:#8a93a6; --neon-green:#39ff9d; --neon-violet:#8b5cf6;
+  --danger:#ff4d5e;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg-main);color:var(--text-main);font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.6;}
+a{color:inherit;}
+.wrap{max-width:900px;margin:0 auto;padding:32px 20px 80px;}
+h1{font-size:22px;font-weight:800;margin:0 0 4px;background:linear-gradient(90deg,var(--neon-green),var(--neon-violet));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.sub{color:var(--text-sub);font-size:13px;margin:0 0 28px;}
+.card{background:var(--bg-panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:20px;}
+.card h2{font-size:15px;font-weight:800;margin:0 0 16px;display:flex;align-items:center;gap:8px;}
+.card h2::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--neon-violet);display:inline-block;}
+label{display:block;font-size:12.5px;color:var(--text-sub);margin:14px 0 6px;font-weight:600;}
+label:first-child{margin-top:0;}
+input[type=text], input[type=email], input[type=password], input[type=date], select, textarea{
+  width:100%;background:var(--bg-panel2);border:1px solid var(--line);border-radius:8px;
+  color:var(--text-main);padding:10px 12px;font-size:14px;font-family:inherit;
+}
+textarea{min-height:110px;resize:vertical;}
+.row{display:flex;gap:12px;}
+.row > div{flex:1;}
+button{
+  background:linear-gradient(90deg,var(--neon-green),var(--neon-violet));border:none;color:#0b0e14;
+  font-weight:800;font-size:14px;padding:11px 20px;border-radius:8px;cursor:pointer;
+}
+button.secondary{background:var(--bg-panel2);color:var(--text-main);border:1px solid var(--line);font-weight:700;}
+button.danger{background:var(--danger);color:#fff;}
+button:disabled{opacity:.5;cursor:not-allowed;}
+.tabs{display:flex;gap:6px;margin-bottom:14px;}
+.tabs button{background:var(--bg-panel2);color:var(--text-sub);border:1px solid var(--line);padding:7px 14px;font-size:12.5px;font-weight:700;}
+.tabs button.active{background:rgba(57,255,157,0.1);color:var(--neon-green);border-color:var(--neon-green);}
+.lang-panel{display:none;}
+.lang-panel.active{display:block;}
+.msg{font-size:13px;padding:10px 12px;border-radius:8px;margin-top:12px;display:none;}
+.msg.ok{display:block;background:rgba(57,255,157,0.1);color:var(--neon-green);border:1px solid rgba(57,255,157,0.3);}
+.msg.err{display:block;background:rgba(255,77,94,0.1);color:var(--danger);border:1px solid rgba(255,77,94,0.3);}
+#loginScreen{max-width:360px;margin:120px auto;}
+#loginScreen .card{padding:28px;}
+.post-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13.5px;}
+.post-item:last-child{border-bottom:none;}
+.post-item .tag{font-size:11px;color:var(--neon-green);background:rgba(57,255,157,0.1);border:1px solid rgba(57,255,157,0.3);border-radius:20px;padding:2px 8px;margin-right:8px;}
+.post-item button{padding:5px 10px;font-size:12px;}
+.actions{display:flex;gap:10px;margin-top:18px;}
+.hint{font-size:11.5px;color:var(--text-sub);margin-top:4px;}
+#topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+#topbar button{padding:7px 14px;font-size:12.5px;}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="card">
+    <h2>관리자 로그인</h2>
+    <label>이메일</label>
+    <input type="email" id="loginEmail" placeholder="you@example.com">
+    <label>비밀번호</label>
+    <input type="password" id="loginPassword" placeholder="비밀번호">
+    <div class="actions"><button onclick="doLogin()" style="width:100%">로그인</button></div>
+    <div class="msg" id="loginMsg"></div>
+  </div>
+</div>
+
+<div class="wrap" id="mainScreen" style="display:none;">
+  <div id="topbar">
+    <div>
+      <h1>CRYPTO INSIGHT LAB 관리 도구</h1>
+      <p class="sub">프로필과 글을 여기서 바로 작성하고 저장하세요.</p>
+    </div>
+    <button class="secondary" onclick="logout()">로그아웃</button>
+  </div>
+
+  <div class="card">
+    <h2>프로필</h2>
+    <label>이름 (사이드바에 표시)</label>
+    <input type="text" id="profName">
+    <label>소개 문구 (한국어)</label>
+    <input type="text" id="profRoleKo">
+    <label>소개 문구 (English)</label>
+    <input type="text" id="profRoleEn">
+    <label>소개 문구 (中文)</label>
+    <input type="text" id="profRoleZh">
+    <div class="actions"><button onclick="saveProfile()">프로필 저장</button></div>
+    <div class="msg" id="profileMsg"></div>
+  </div>
+
+  <div class="card">
+    <h2 id="writeHeading">새 글 작성</h2>
+    <input type="hidden" id="editSlug" value="">
+    <input type="hidden" id="editSha" value="">
+    <div class="row">
+      <div>
+        <label>카테고리</label>
+        <select id="postCategory">
+          <option>비트코인</option>
+          <option>알트코인</option>
+          <option>시황분석</option>
+          <option>온체인 데이터</option>
+          <option>거래소 소식</option>
+          <option>공지</option>
+        </select>
+      </div>
+      <div>
+        <label>작성자</label>
+        <input type="text" id="postAuthor" value="TRS">
+      </div>
+      <div>
+        <label>날짜</label>
+        <input type="date" id="postDate">
+      </div>
+    </div>
+
+    <div class="tabs" id="langTabs">
+      <button type="button" class="active" data-lang="ko" onclick="switchLangTab('ko')">한국어</button>
+      <button type="button" data-lang="en" onclick="switchLangTab('en')">English</button>
+      <button type="button" data-lang="zh" onclick="switchLangTab('zh')">中文</button>
+    </div>
+
+    <div class="lang-panel active" data-lang="ko">
+      <label>제목 (한국어) *</label>
+      <input type="text" id="title_ko">
+      <label>요약 (한국어) *</label>
+      <textarea id="excerpt_ko" style="min-height:60px;"></textarea>
+      <label>본문 (한국어) *</label>
+      <textarea id="body_ko"></textarea>
+    </div>
+    <div class="lang-panel" data-lang="en">
+      <label>제목 (English)</label>
+      <input type="text" id="title_en">
+      <label>요약 (English)</label>
+      <textarea id="excerpt_en" style="min-height:60px;"></textarea>
+      <label>본문 (English)</label>
+      <textarea id="body_en"></textarea>
+      <p class="hint">비워두면 사이트에서 한국어로 대체 표시됩니다.</p>
+    </div>
+    <div class="lang-panel" data-lang="zh">
+      <label>제목 (中文)</label>
+      <input type="text" id="title_zh">
+      <label>요약 (中文)</label>
+      <textarea id="excerpt_zh" style="min-height:60px;"></textarea>
+      <label>본문 (中文)</label>
+      <textarea id="body_zh"></textarea>
+      <p class="hint">비워두면 사이트에서 한국어로 대체 표시됩니다.</p>
+    </div>
+
+    <div class="actions">
+      <button onclick="savePost()">저장</button>
+      <button class="secondary" onclick="resetForm()">새 글로 초기화</button>
+      <button class="danger" id="deleteBtn" style="display:none;" onclick="deletePost()">이 글 삭제</button>
+    </div>
+    <div class="msg" id="postMsg"></div>
+  </div>
+
+  <div class="card">
+    <h2>작성된 글 목록</h2>
+    <div id="postList">불러오는 중...</div>
+  </div>
+</div>
+
+<script>
+const GH_USER = "chaehun98123-alt";
+const GH_REPO = "crypto-insight-lab";
+const GH_BRANCH = "main";
+const GATEWAY = location.origin + "/.netlify/git/github/repos/" + GH_USER + "/" + GH_REPO;
+
+let accessToken = sessionStorage.getItem('cil_token') || null;
+
+function b64encode(str){ return btoa(unescape(encodeURIComponent(str))); }
+function b64decode(str){ return decodeURIComponent(escape(atob(str.replace(/\n/g,'')))); }
+
+async function ghFetch(path, options){
+  options = options || {};
+  options.headers = Object.assign({}, options.headers, {
+    'Authorization': 'Bearer ' + accessToken,
+    'Content-Type': 'application/json'
+  });
+  const res = await fetch(GATEWAY + path, options);
+  return res;
+}
+
+async function doLogin(){
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const msg = document.getElementById('loginMsg');
+  msg.className = 'msg'; msg.textContent = '';
+  if(!email || !password){
+    msg.className = 'msg err'; msg.textContent = '이메일과 비밀번호를 입력해주세요.';
+    return;
+  }
+  try{
+    const res = await fetch(location.origin + '/.netlify/identity/token', {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-www-form-urlencoded'},
+      body: 'grant_type=password&username=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password)
+    });
+    const data = await res.json();
+    if(!res.ok){
+      msg.className = 'msg err';
+      msg.textContent = '로그인 실패: ' + (data.error_description || data.msg || '이메일/비밀번호를 확인해주세요.');
+      return;
+    }
+    accessToken = data.access_token;
+    sessionStorage.setItem('cil_token', accessToken);
+    showMain();
+  }catch(e){
+    msg.className = 'msg err'; msg.textContent = '로그인 중 오류가 발생했습니다: ' + e.message;
+  }
+}
+
+function logout(){
+  sessionStorage.removeItem('cil_token');
+  accessToken = null;
+  document.getElementById('mainScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'block';
+}
+
+async function showMain(){
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('mainScreen').style.display = 'block';
+  document.getElementById('postDate').value = new Date().toISOString().slice(0,10);
+  await loadProfile();
+  await loadPostList();
+}
+
+function switchLangTab(lang){
+  document.querySelectorAll('#langTabs button').forEach(b=> b.classList.toggle('active', b.dataset.lang===lang));
+  document.querySelectorAll('.lang-panel').forEach(p=> p.classList.toggle('active', p.dataset.lang===lang));
+}
+
+function showMsg(id, ok, text){
+  const el = document.getElementById(id);
+  el.className = 'msg ' + (ok ? 'ok' : 'err');
+  el.textContent = text;
+  setTimeout(()=>{ el.className = 'msg'; }, 4000);
+}
+
+/* ===== 프로필 ===== */
+let profileSha = null;
+async function loadProfile(){
+  try{
+    const res = await ghFetch('/contents/content/settings.json?ref=' + GH_BRANCH);
+    if(res.status === 404){ return; }
+    const data = await res.json();
+    profileSha = data.sha;
+    const json = JSON.parse(b64decode(data.content));
+    document.getElementById('profName').value = json.author_name || '';
+    document.getElementById('profRoleKo').value = json.role_ko || '';
+    document.getElementById('profRoleEn').value = json.role_en || '';
+    document.getElementById('profRoleZh').value = json.role_zh || '';
+  }catch(e){ console.error('프로필 로드 실패', e); }
+}
+
+async function saveProfile(){
+  const json = {
+    author_name: document.getElementById('profName').value.trim(),
+    role_ko: document.getElementById('profRoleKo').value.trim(),
+    role_en: document.getElementById('profRoleEn').value.trim(),
+    role_zh: document.getElementById('profRoleZh').value.trim()
+  };
+  const body = {
+    message: '프로필 업데이트',
+    content: b64encode(JSON.stringify(json, null, 2)),
+    branch: GH_BRANCH
+  };
+  if(profileSha) body.sha = profileSha;
+  try{
+    const res = await ghFetch('/contents/content/settings.json', {method:'PUT', body: JSON.stringify(body)});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.message || '저장 실패');
+    profileSha = data.content.sha;
+    showMsg('profileMsg', true, '프로필이 저장됐습니다. 몇 초 후 사이트에 반영됩니다.');
+  }catch(e){
+    showMsg('profileMsg', false, '저장 실패: ' + e.message);
+  }
+}
+
+/* ===== 글쓰기 ===== */
+function buildMarkdown(){
+  const category = document.getElementById('postCategory').value;
+  const author = document.getElementById('postAuthor').value.trim() || 'TRS';
+  const date = document.getElementById('postDate').value;
+  const get = id => document.getElementById(id).value;
+
+  function yamlStr(v){ return '"' + String(v).replace(/"/g,'\\"').replace(/\n/g,' ') + '"'; }
+  function yamlBlock(v){
+    if(!v) return '""';
+    return '|\n' + v.split('\n').map(l => '  ' + l).join('\n');
+  }
+
+  let fm = '---\n';
+  fm += 'author: ' + yamlStr(author) + '\n';
+  fm += 'category: ' + yamlStr(category) + '\n';
+  fm += 'date: ' + date + '\n';
+  fm += 'title_ko: ' + yamlStr(get('title_ko')) + '\n';
+  if(get('title_en')) fm += 'title_en: ' + yamlStr(get('title_en')) + '\n';
+  if(get('title_zh')) fm += 'title_zh: ' + yamlStr(get('title_zh')) + '\n';
+  fm += 'excerpt_ko: ' + yamlStr(get('excerpt_ko')) + '\n';
+  if(get('excerpt_en')) fm += 'excerpt_en: ' + yamlStr(get('excerpt_en')) + '\n';
+  if(get('excerpt_zh')) fm += 'excerpt_zh: ' + yamlStr(get('excerpt_zh')) + '\n';
+  fm += 'body_ko: ' + yamlBlock(get('body_ko')) + '\n';
+  if(get('body_en')) fm += 'body_en: ' + yamlBlock(get('body_en')) + '\n';
+  if(get('body_zh')) fm += 'body_zh: ' + yamlBlock(get('body_zh')) + '\n';
+  fm += '---\n';
+  return fm;
+}
+
+function slugify(){
+  const date = document.getElementById('postDate').value || new Date().toISOString().slice(0,10);
+  return date + '-' + Math.random().toString(36).slice(2,8);
+}
+
+async function savePost(){
+  if(!document.getElementById('title_ko').value.trim() || !document.getElementById('body_ko').value.trim()){
+    showMsg('postMsg', false, '한국어 제목과 본문은 필수입니다.');
+    return;
+  }
+  const existingSlug = document.getElementById('editSlug').value;
+  const existingSha = document.getElementById('editSha').value;
+  const slug = existingSlug || slugify();
+  const path = '/contents/content/posts/' + slug + '.md';
+  const md = buildMarkdown();
+
+  const body = {
+    message: (existingSlug ? '글 수정: ' : '새 글: ') + document.getElementById('title_ko').value,
+    content: b64encode(md),
+    branch: GH_BRANCH
+  };
+  if(existingSha) body.sha = existingSha;
+
+  try{
+    const res = await ghFetch(path, {method:'PUT', body: JSON.stringify(body)});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.message || '저장 실패');
+    showMsg('postMsg', true, '저장됐습니다. 몇 초 후 사이트에 반영됩니다.');
+    resetForm();
+    await loadPostList();
+  }catch(e){
+    showMsg('postMsg', false, '저장 실패: ' + e.message);
+  }
+}
+
+function resetForm(){
+  document.getElementById('editSlug').value = '';
+  document.getElementById('editSha').value = '';
+  document.getElementById('writeHeading').textContent = '새 글 작성';
+  document.getElementById('deleteBtn').style.display = 'none';
+  ['title_ko','title_en','title_zh','excerpt_ko','excerpt_en','excerpt_zh','body_ko','body_en','body_zh'].forEach(id=>{
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('postCategory').selectedIndex = 0;
+  document.getElementById('postDate').value = new Date().toISOString().slice(0,10);
+  switchLangTab('ko');
+}
+
+/* ===== 간단 YAML 파서 (목록/수정용) ===== */
+function parseFrontmatter(raw){
+  const meta = {};
+  if(!raw.startsWith('---')) return meta;
+  const rest = raw.replace(/^---\r?\n/, '');
+  const closeMatch = rest.match(/\r?\n---\r?\n?/);
+  const yamlPart = closeMatch ? rest.slice(0, closeMatch.index) : rest;
+  const lines = yamlPart.split(/\r?\n/);
+  let i = 0;
+  while(i < lines.length){
+    const line = lines[i];
+    const idx = line.indexOf(':');
+    if(idx > -1){
+      const key = line.slice(0, idx).trim();
+      let val = line.slice(idx+1).trim();
+      if(val === '|'){
+        const blockLines = [];
+        i++;
+        while(i < lines.length && (lines[i].startsWith('  ') || lines[i].trim()==='')){
+          blockLines.push(lines[i].replace(/^  /,''));
+          i++;
+        }
+        meta[key] = blockLines.join('\n').trim();
+        continue;
+      } else {
+        val = val.replace(/^"|"$/g,'').replace(/\\"/g,'"');
+        meta[key] = val;
+      }
+    }
+    i++;
+  }
+  return meta;
+}
+
+async function loadPostList(){
+  const el = document.getElementById('postList');
+  try{
+    const res = await ghFetch('/contents/content/posts?ref=' + GH_BRANCH);
+    const files = await res.json();
+    if(!Array.isArray(files)){ el.textContent = '글이 없습니다.'; return; }
+    const mdFiles = files.filter(f => f.name.endsWith('.md'));
+    const items = await Promise.all(mdFiles.map(async f=>{
+      const fres = await ghFetch('/contents/content/posts/' + f.name + '?ref=' + GH_BRANCH);
+      const fdata = await fres.json();
+      const raw = b64decode(fdata.content);
+      const meta = parseFrontmatter(raw);
+      return { slug: f.name.replace(/\.md$/,''), sha: fdata.sha, meta, raw };
+    }));
+    items.sort((a,b)=> (b.meta.date||'').localeCompare(a.meta.date||''));
+    if(items.length === 0){ el.innerHTML = '<p class="hint">아직 작성된 글이 없습니다.</p>'; return; }
+    el.innerHTML = items.map(it => `
+      <div class="post-item">
+        <div><span class="tag">${it.meta.category||''}</span>${it.meta.title_ko||'(제목 없음)'} <span class="hint">${it.meta.date||''}</span></div>
+        <button class="secondary" onclick='loadPostForEdit(${JSON.stringify(it.slug)}, ${JSON.stringify(it.sha)}, ${JSON.stringify(it.meta)})'>수정</button>
+      </div>
+    `).join('');
+  }catch(e){
+    el.textContent = '목록을 불러오지 못했습니다: ' + e.message;
+  }
+}
+
+function loadPostForEdit(slug, sha, meta){
+  document.getElementById('editSlug').value = slug;
+  document.getElementById('editSha').value = sha;
+  document.getElementById('writeHeading').textContent = '글 수정: ' + (meta.title_ko||'');
+  document.getElementById('deleteBtn').style.display = 'inline-block';
+  document.getElementById('postCategory').value = meta.category || '비트코인';
+  document.getElementById('postAuthor').value = meta.author || 'TRS';
+  document.getElementById('postDate').value = meta.date || new Date().toISOString().slice(0,10);
+  ['title_ko','title_en','title_zh','excerpt_ko','excerpt_en','excerpt_zh','body_ko','body_en','body_zh'].forEach(id=>{
+    document.getElementById(id).value = meta[id] || '';
+  });
+  switchLangTab('ko');
+  window.scrollTo({top: 0, behavior:'smooth'});
+}
+
+async function deletePost(){
+  const slug = document.getElementById('editSlug').value;
+  const sha = document.getElementById('editSha').value;
+  if(!slug) return;
+  if(!confirm('정말 이 글을 삭제하시겠습니까?')) return;
+  try{
+    const res = await ghFetch('/contents/content/posts/' + slug + '.md', {
+      method:'DELETE',
+      body: JSON.stringify({message:'글 삭제: ' + slug, sha: sha, branch: GH_BRANCH})
+    });
+    if(!res.ok){ const d = await res.json(); throw new Error(d.message||'삭제 실패'); }
+    showMsg('postMsg', true, '삭제됐습니다.');
+    resetForm();
+    await loadPostList();
+  }catch(e){
+    showMsg('postMsg', false, '삭제 실패: ' + e.message);
+  }
+}
+
+if(accessToken){ showMain(); }
+</script>
+
+</body>
+</html>
