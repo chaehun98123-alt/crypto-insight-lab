@@ -1,4 +1,5 @@
 ---
+image: "https://raw.githubusercontent.com/chaehun98123-alt/crypto-insight-lab/main/content/uploads/btc-halving.png"
 author: "TRS"
 category: "비트코인"
 date: 2026-07-10
