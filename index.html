@@ -153,16 +153,25 @@ function catLabel(cat){ return (CAT_LABELS[cat] && CAT_LABELS[cat][lang]) || cat
 function field(p, base){ return p[base + '_' + lang] || p[base + '_ko'] || ''; }
 
 function parseFrontmatter(raw, filename){
-  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
   let meta = { slug: filename.replace(/\.md$/,'') };
-  if(match){
+  if(raw.startsWith('---')){
+    const rest = raw.replace(/^---\r?\n/, '');
+    const closeMatch = rest.match(/\r?\n---\r?\n?/);
+    let yamlPart, bodyPart;
+    if(closeMatch){
+      yamlPart = rest.slice(0, closeMatch.index);
+      bodyPart = rest.slice(closeMatch.index + closeMatch[0].length);
+    } else {
+      yamlPart = rest;
+      bodyPart = '';
+    }
     try{
-      const data = jsyaml.load(match[1]) || {};
+      const data = jsyaml.load(yamlPart) || {};
       meta = Object.assign(meta, data);
     }catch(e){
       console.error('frontmatter parse error', e);
     }
-    if(match[2] && match[2].trim()) meta.body_ko = meta.body_ko || match[2].trim();
+    if(bodyPart && bodyPart.trim() && !meta.body_ko) meta.body_ko = bodyPart.trim();
   } else {
     meta.body_ko = raw;
   }
