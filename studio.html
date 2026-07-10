@@ -368,6 +368,7 @@ function buildMarkdown(){
   fm += 'author: ' + yamlStr(author) + '\n';
   fm += 'category: ' + yamlStr(category) + '\n';
   fm += 'date: ' + date + '\n';
+  fm += 'order: ' + Date.now() + '\n';
   fm += 'title_ko: ' + yamlStr(get('title_ko')) + '\n';
   if(get('title_en')) fm += 'title_en: ' + yamlStr(get('title_en')) + '\n';
   if(get('title_zh')) fm += 'title_zh: ' + yamlStr(get('title_zh')) + '\n';
