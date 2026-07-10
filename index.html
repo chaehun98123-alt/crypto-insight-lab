@@ -57,11 +57,21 @@ a{color:inherit;text-decoration:none;}
 .ticker-chip .price{font-size:15px;font-weight:800;margin:2px 0;}
 .ticker-chip .rate.up{color:var(--up-red);}
 .ticker-chip .rate.down{color:var(--down-blue);}
+
+.lang-switch{position:absolute;top:16px;right:20px;display:flex;gap:6px;}
+.lang-switch button{background:var(--bg-panel);border:1px solid var(--line);color:var(--text-sub);font-size:12px;padding:5px 10px;border-radius:8px;cursor:pointer;font-weight:600;}
+.lang-switch button.active{color:var(--neon-green);border-color:var(--neon-green);}
+.post-author{color:var(--text-sub);}
 </style>
 </head>
 <body>
 
 <header class="blog-header">
+  <div class="lang-switch" id="langSwitch">
+    <button data-lang="ko">KO</button>
+    <button data-lang="en">EN</button>
+    <button data-lang="zh">ZH</button>
+  </div>
   <h1 class="blog-title">CRYPTO INSIGHT LAB</h1>
   <p class="blog-desc">데이터로 읽는 코인 시황 · 매일 아침 업데이트</p>
 </header>
@@ -103,36 +113,60 @@ a{color:inherit;text-decoration:none;}
   © CRYPTO INSIGHT LAB · 본 블로그의 콘텐츠는 투자 참고용이며 투자 손실에 대한 책임은 본인에게 있습니다.
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 <script>
 /* =========================================================
    아래 두 값을 GitHub 저장소 정보로 바꿔주세요.
-   예: GH_USER = "gimuntak", GH_REPO = "crypto-insight-lab"
    ========================================================= */
 const GH_USER = "chaehun98123-alt";
 const GH_REPO = "crypto-insight-lab";
 const GH_BRANCH = "main";
 
-const categories = ["전체", "비트코인", "알트코인", "시황분석", "온체인 데이터", "거래소 소식", "공지"];
+const CATS = ["전체", "비트코인", "알트코인", "시황분석", "온체인 데이터", "거래소 소식", "공지"];
+const CAT_LABELS = {
+  "전체":        {ko:"전체보기",     en:"All",              zh:"全部"},
+  "비트코인":     {ko:"비트코인",     en:"Bitcoin",          zh:"比特币"},
+  "알트코인":     {ko:"알트코인",     en:"Altcoins",         zh:"山寨币"},
+  "시황분석":     {ko:"시황분석",     en:"Market Analysis",  zh:"市场分析"},
+  "온체인 데이터": {ko:"온체인 데이터", en:"On-chain Data",   zh:"链上数据"},
+  "거래소 소식":  {ko:"거래소 소식",  en:"Exchange News",    zh:"交易所资讯"},
+  "공지":        {ko:"공지",         en:"Notice",           zh:"公告"}
+};
+const UI = {
+  ko: {desc:"데이터로 읽는 코인 시황 · 매일 아침 업데이트", role:"5년 차 코인 분석가 · 매일 시황 브리핑",
+       recent:"최근글", category:"카테고리", loading:"글을 불러오는 중...", empty:"이 카테고리에는 아직 글이 없습니다.",
+       by:"작성", footer:"본 블로그의 콘텐츠는 투자 참고용이며 투자 손실에 대한 책임은 본인에게 있습니다."},
+  en: {desc:"Reading the crypto market through data · Updated every morning", role:"Crypto analyst, 5 years of experience · Daily market briefing",
+       recent:"Recent posts", category:"Categories", loading:"Loading posts...", empty:"No posts in this category yet.",
+       by:"By", footer:"Content on this blog is for reference only. You are responsible for your own investment decisions."},
+  zh: {desc:"用数据解读币市行情 · 每日早晨更新", role:"5年经验加密货币分析师 · 每日行情简报",
+       recent:"最新文章", category:"分类", loading:"正在加载文章...", empty:"该分类下暂无文章。",
+       by:"作者", footer:"本博客内容仅供参考，投资损失由本人自行承担。"}
+};
+
+let lang = localStorage.getItem('lang') || 'ko';
 let activeCategory = "전체";
 let posts = [];
 
+function t(key){ return UI[lang][key]; }
+function catLabel(cat){ return (CAT_LABELS[cat] && CAT_LABELS[cat][lang]) || cat; }
+function field(p, base){ return p[base + '_' + lang] || p[base + '_ko'] || ''; }
+
 function parseFrontmatter(raw, filename){
-  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
-  const meta = { slug: filename.replace(/\.md$/,'') };
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+  let meta = { slug: filename.replace(/\.md$/,'') };
   if(match){
-    match[1].split(/\r?\n/).forEach(line=>{
-      const idx = line.indexOf(':');
-      if(idx>-1){
-        let key = line.slice(0,idx).trim();
-        let val = line.slice(idx+1).trim().replace(/^["']|["']$/g,'');
-        meta[key]=val;
-      }
-    });
-    meta.body = match[2].trim();
+    try{
+      const data = jsyaml.load(match[1]) || {};
+      meta = Object.assign(meta, data);
+    }catch(e){
+      console.error('frontmatter parse error', e);
+    }
+    if(match[2] && match[2].trim()) meta.body_ko = meta.body_ko || match[2].trim();
   } else {
-    meta.body = raw;
+    meta.body_ko = raw;
   }
-  if(!meta.excerpt) meta.excerpt = meta.body.slice(0,80) + '...';
+  if(meta.date && meta.date.toISOString) meta.date = meta.date.toISOString().slice(0,10).replace(/-/g,'.');
   return meta;
 }
 
@@ -150,10 +184,26 @@ async function loadPosts(){
   return loaded;
 }
 
+function renderLangSwitch(){
+  document.querySelectorAll('#langSwitch button').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+}
+
+function renderHeaderTexts(){
+  document.querySelector('.blog-desc').textContent = t('desc');
+  document.querySelector('.profile-widget .role').textContent = t('role');
+  document.querySelectorAll('.widget h3')[0].textContent = t('recent');
+  document.querySelectorAll('.widget h3')[1].textContent = t('category');
+  document.getElementById('loadingMsg').textContent = t('loading');
+  document.getElementById('emptyMsg').textContent = t('empty');
+  document.querySelector('.blog-footer').textContent = '© CRYPTO INSIGHT LAB · ' + t('footer');
+}
+
 function renderNav(){
   const nav = document.getElementById('navMenu');
-  nav.innerHTML = categories.map(c =>
-    `<a href="#" data-cat="${c}" class="${c===activeCategory ? 'active':''}">${c}</a>`
+  nav.innerHTML = CATS.map(c =>
+    `<a href="#" data-cat="${c}" class="${c===activeCategory ? 'active':''}">${catLabel(c)}</a>`
   ).join('');
   nav.querySelectorAll('a').forEach(a=>{
     a.addEventListener('click', e=>{
@@ -177,15 +227,19 @@ function renderPosts(){
   }
   empty.style.display = "none";
 
-  list.innerHTML = filtered.map(p=>`
+  list.innerHTML = filtered.map(p=>{
+    const title = field(p, 'title') || '(no title)';
+    const excerpt = field(p, 'excerpt');
+    const body = field(p, 'body');
+    return `
     <article class="post-card">
-      <span class="post-tag">${p.category||'미분류'}</span>
-      <h2 class="post-title">${p.title||'(제목 없음)'}</h2>
-      <p class="post-excerpt">${p.excerpt}</p>
-      <div class="post-meta"><span>${p.date||''}</span></div>
-      <div class="post-body">${p.body}</div>
+      <span class="post-tag">${catLabel(p.category)}</span>
+      <h2 class="post-title">${title}</h2>
+      <p class="post-excerpt">${excerpt}</p>
+      <div class="post-meta"><span>${p.date||''}</span><span class="post-author">${t('by')} ${p.author||''}</span></div>
+      <div class="post-body">${body}</div>
     </article>
-  `).join('');
+  `;}).join('');
 
   list.querySelectorAll('.post-card').forEach(card=>{
     card.addEventListener('click', ()=> card.classList.toggle('open'));
@@ -194,14 +248,29 @@ function renderPosts(){
 
 function renderSidebar(){
   const recent = document.getElementById('popularList');
-  recent.innerHTML = posts.slice(0,5).map(p=>`<li>${p.title}</li>`).join('');
+  recent.innerHTML = posts.slice(0,5).map(p=>`<li>${field(p,'title')}</li>`).join('');
 
   const catList = document.getElementById('categoryCountList');
   const counts = {};
   posts.forEach(p=> counts[p.category] = (counts[p.category]||0)+1);
-  catList.innerHTML = Object.entries(counts).map(([c,n])=>`<li>${c} (${n})</li>`).join('');
+  catList.innerHTML = Object.entries(counts).map(([c,n])=>`<li>${catLabel(c)} (${n})</li>`).join('');
 }
 
+function renderAll(){
+  renderLangSwitch();
+  renderHeaderTexts();
+  renderNav();
+  renderPosts();
+  renderSidebar();
+}
+
+document.querySelectorAll('#langSwitch button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    lang = btn.dataset.lang;
+    localStorage.setItem('lang', lang);
+    renderAll();
+  });
+});
 
 /* ===== 실시간 시세 (업비트 공개 API, 5초마다 갱신) ===== */
 async function updateTicker(){
@@ -226,6 +295,8 @@ async function updateTicker(){
 updateTicker();
 setInterval(updateTicker, 5000);
 
+renderLangSwitch();
+renderHeaderTexts();
 renderNav();
 loadPosts().then(data=>{
   posts = data;
@@ -233,6 +304,7 @@ loadPosts().then(data=>{
   renderPosts();
   renderSidebar();
 }).catch(err=>{
+  console.error(err);
   document.getElementById('loadingMsg').textContent = '글을 불러오지 못했습니다. index.html의 GH_USER / GH_REPO 값을 확인해주세요.';
 });
 </script>
