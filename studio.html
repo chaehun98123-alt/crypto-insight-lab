@@ -493,12 +493,33 @@ function loadPostForEdit(slug, meta){
   window.scrollTo({top: 0, behavior:'smooth'});
 }
 
+
+async function deleteFileRobust(dirPath, filename, message){
+  const headSha = await getBranchHead();
+  const headCommit = await getCommit(headSha);
+  const rootTreeSha = headCommit.tree.sha;
+  const dirEntries = await getTree(dirPath);
+  const remaining = dirEntries.filter(e => e.path !== filename).map(e => ({path: e.path, mode: e.mode, type: e.type, sha: e.sha}));
+  const subTreeRes = await ghFetch('/git/trees', { method:'POST', body: JSON.stringify({ tree: remaining }) });
+  const subTreeData = await subTreeRes.json();
+  if(!subTreeData.sha) throw new Error('삭제 실패(subtree): ' + JSON.stringify(subTreeData));
+  const rootTreeRes = await ghFetch('/git/trees', { method:'POST', body: JSON.stringify({ base_tree: rootTreeSha, tree: [{ path: dirPath, mode:'040000', type:'tree', sha: subTreeData.sha }] }) });
+  const rootTreeData = await rootTreeRes.json();
+  if(!rootTreeData.sha) throw new Error('삭제 실패(tree): ' + JSON.stringify(rootTreeData));
+  const commitRes = await ghFetch('/git/commits', { method:'POST', body: JSON.stringify({ message, tree: rootTreeData.sha, parents:[headSha] }) });
+  const commitData = await commitRes.json();
+  if(!commitData.sha) throw new Error('삭제 실패(commit): ' + JSON.stringify(commitData));
+  const refRes = await ghFetch('/git/refs/heads/main', { method:'PATCH', body: JSON.stringify({ sha: commitData.sha }) });
+  if(refRes.status !== 200) throw new Error('삭제 실패(ref)');
+  return commitData.sha;
+}
+
 async function deletePost(){
   const slug = document.getElementById('editSlug').value;
   if(!slug) return;
   if(!confirm('정말 이 글을 삭제하시겠습니까?')) return;
   try{
-    await commitFile('content/posts/' + slug + '.md', '', '글 삭제: ' + slug, true);
+    await deleteFileRobust('content/posts', slug + '.md', '글 삭제: ' + slug);
     showMsg('postMsg', true, '삭제됐습니다.');
     resetForm();
     await loadPostList();
