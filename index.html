@@ -111,7 +111,7 @@ a{color:inherit;text-decoration:none;}
 
   <aside class="side-col">
     <div class="widget profile-widget">
-      <div class="avatar"></div>
+      <div class="avatar" style="background-image:url('./content/uploads/trs-avatar.jpg');background-size:cover;background-position:center;"></div>
       <div class="name" id="profileName">기문탁</div>
       <div class="role">5년 차 코인 분석가 · 매일 시황 브리핑</div>
     </div>
@@ -194,7 +194,7 @@ function linkifyText(md){
   if(!md) return md;
   let out = md;
   out = out.replace(/\[(https?:\/\/[^\]\s]+)\](?!\()/g, '[$1]($1)');
-  out = out.replace(/@(TRXNEWS2|TRX00481X)\b(?!\])/g, function(m, handle){ return '[' + m + '](https://t.me/' + handle + ')'; });
+  out = out.replace(/@(TRXNEWS2|TRX00481X|TRSNEWS2)\b(?!\])/g, function(m, handle){ return '[' + m + '](https://t.me/' + handle + ')'; });
   out = out.replace(/(^|[^(\]"'>])(https?:\/\/[^\s\)\]]+)/g, function(m, pre, url){ return pre + '[' + url + '](' + url + ')'; });
   return out;
 }
