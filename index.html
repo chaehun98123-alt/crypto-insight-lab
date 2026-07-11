@@ -72,6 +72,10 @@ a{color:inherit;text-decoration:none;}
 .post-detail .post-title{font-size:24px;}
 .post-detail .post-body{display:block;white-space:pre-line;border-top:none;margin-top:16px;padding-top:0;}
 #postListView.hidden{display:none;}
+.post-detail{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+.post-detail .post-body a{color:var(--neon-green);text-decoration:underline;cursor:pointer;}
+.post-detail img{-webkit-user-drag:none;pointer-events:auto;}
+
 </style>
 </head>
 <body>
@@ -185,6 +189,26 @@ return temp.innerHTML;
 }
 const pendingTranslations = new Set();
 function cleanTitle(t){ return String(t||'').replace(/^#+\s*/, ''); }
+function linkifyText(md){
+  if(!md) return md;
+  let out = md;
+  out = out.replace(/\[(https?:\/\/[^\]\s]+)\](?!\()/g, '[$1]($1)');
+  out = out.replace(/@(TRXNEWS2|TRX00481X)\b(?!\])/g, function(m, handle){ return '[' + m + '](https://t.me/' + handle + ')'; });
+  out = out.replace(/(^|[^(\]"'>])(https?:\/\/[^\s\)\]]+)/g, function(m, pre, url){ return pre + '[' + url + '](' + url + ')'; });
+  return out;
+}
+function hardenLinks(html){
+  return html.replace(/<a\s+href=/g, '<a target="_blank" rel="noopener noreferrer" href=');
+}
+function attachCopyGuard(container){
+  if(!container) return;
+  container.oncontextmenu = function(e){ e.preventDefault(); return false; };
+  container.oncopy = function(e){ e.preventDefault(); return false; };
+  container.oncut = function(e){ e.preventDefault(); return false; };
+  container.onselectstart = function(e){ if(e.target && e.target.closest('a,button')) return true; e.preventDefault(); return false; };
+  container.querySelectorAll('img').forEach(function(img){ img.ondragstart = function(e){ e.preventDefault(); return false; }; });
+}
+
 function field(p, base){
 const direct = p[base + '_' + lang];
 if(direct) return direct;
@@ -348,8 +372,9 @@ return;
 }
 const title = cleanTitle(field(p, 'title')) || '(no title)';
 const excerpt = field(p, 'excerpt');
-const rawBody = field(p, 'body');
-const body = (typeof marked !== 'undefined') ? marked.parse(rawBody) : rawBody;
+const rawBody = linkifyText(field(p, 'body'));
+let body = (typeof marked !== 'undefined') ? marked.parse(rawBody) : rawBody;
+body = hardenLinks(body);
 const thumb = p.image ? '<img class="post-thumb" src="' + p.image + '" alt="' + title + '">' : '';
 detail.innerHTML = `
 <button class="back-btn" id="backBtn">← ${lang==='ko'?'목록으로':(lang==='en'?'Back to list':'返回列表')}</button>
@@ -363,6 +388,7 @@ ${thumb}
 </article>
 `;
 document.getElementById('backBtn').addEventListener('click', ()=>{ location.hash=''; });
+attachCopyGuard(document.getElementById('postDetail'));
 }
 
 function route(){
