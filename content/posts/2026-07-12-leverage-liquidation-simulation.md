@@ -4,7 +4,7 @@ category: 레버리지 데이터
 date: 2026-07-12
 order: 1783820416400
 image: https://quickchart.io/chart?w=800&h=450&bkg=white&c=%7B%22type%22%3A%22bar%22%2C%22data%22%3A%7B%22labels%22%3A%5B%225x%22%2C%2210x%22%2C%2225x%22%2C%2250x%22%5D%2C%22datasets%22%3A%5B%7B%22label%22%3A%22%EB%A1%B1%20%EC%B2%AD%EC%82%B0%EA%B0%80%28%EB%8B%A8%EC%88%9C%EA%B3%84%EC%82%B0%29%22%2C%22data%22%3A%5B51280.0%2C57690.0%2C61536.0%2C62818.0%5D%2C%22backgroundColor%22%3A%22%23ef4444%22%7D%2C%7B%22label%22%3A%22%EC%88%8F%20%EC%B2%AD%EC%82%B0%EA%B0%80%28%EB%8B%A8%EC%88%9C%EA%B3%84%EC%82%B0%29%22%2C%22data%22%3A%5B76920.0%2C70510.0%2C66664.0%2C65382.0%5D%2C%22backgroundColor%22%3A%22%233b82f6%22%7D%5D%7D%2C%22options%22%3A%7B%22plugins%22%3A%7B%22title%22%3A%7B%22display%22%3Atrue%2C%22text%22%3A%22BTC%20%2464100%20%EA%B8%B0%EC%A4%80%20%EB%A0%88%EB%B2%84%EB%A6%AC%EC%A7%80%EB%B3%84%20%EB%8B%A8%EC%88%9C%20%EC%B2%AD%EC%82%B0%EA%B0%80%20%EC%8B%9C%EB%AE%AC%EB%A0%88%EC%9D%B4%EC%85%98%22%7D%7D%7D%7D
-title_ko: "BTC $64,100 기준, 레버리지 5~50배  시뮬레이션"
+title_ko: "BTC $64,100 기준, 레버리지 5~50배 청산가 시뮬레이션"
 excerpt_ko: "오늘 비트코인 가격을 기준으로 레버리지 배율별 단순 청산가를 계산해봤습니다. 실제 거래소 청산가와의 차이도 함께 짚어봅니다."
 body_ko: |
   ### ⚠️ 레버리지 청산가, 오늘 비트코인 가격 기준으로 계산해봤어요
