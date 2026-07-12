@@ -300,11 +300,17 @@ function renderHeaderTexts(){
   document.querySelector('.blog-desc').textContent = t('desc');
   const roleEl = document.querySelector('.profile-widget .role');
   const nameEl = document.getElementById('profileName');
+  function renderRoleText(el, text){
+    if(!text){ el.textContent=''; return; }
+    const esc = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const linked = esc.replace(/@(TRXNEWS2|TRX00481X|TRSNEWS2)\b/g, '<a href="https://t.me/$1" target="_blank" rel="noopener">@$1</a>');
+    el.innerHTML = linked.replace(/\n/g, '<br>');
+  }
   if(settings){
     nameEl.textContent = settings.author_name || '기문탁';
-    roleEl.textContent = settings['role_' + lang] || settings.role_ko || t('role');
+    renderRoleText(roleEl, settings['role_' + lang] || settings.role_ko || t('role'));
   } else {
-    roleEl.textContent = t('role');
+    renderRoleText(roleEl, t('role'));
   }
   document.querySelectorAll('.widget h3')[0].textContent = t('recent');
   document.querySelectorAll('.widget h3')[1].textContent = t('category');
